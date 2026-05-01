@@ -6,7 +6,6 @@ Wraps astropy.io.fits and astroquery.mast for common HST data operations.
 """
 
 import numpy as np
-from pathlib import Path
 from typing import Optional, Tuple, List
 from astropy.io import fits
 from astropy.wcs import WCS
