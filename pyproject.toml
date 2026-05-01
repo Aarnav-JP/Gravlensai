@@ -48,7 +48,12 @@ dev = [
 include-package-data = true
 
 [tool.setuptools.packages.find]
+where = ["."]
 include = ["gravlensai*"]
+
+[tool.setuptools.dynamic]
+# Explicitly list all subpackages to ensure editable install works
+version = {attr = "gravlensai.__version__"}
 
 [tool.mypy]
 python_version = "3.10"

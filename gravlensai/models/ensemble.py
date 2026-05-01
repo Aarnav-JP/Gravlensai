@@ -36,7 +36,7 @@ class EnsembleClassifier:
         self.lightweight = lightweight_model
         self.rf = rf_model
         self.lr = lr_model
-        self.meta_model_path = None # Store path instead of model to run in subprocess
+        self.meta_model_path: str | None = None  # Type-annotated for mypy
 
         self.device = device or torch.device("cpu")
         self.resnet.to(self.device).eval()
