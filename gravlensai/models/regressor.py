@@ -45,7 +45,7 @@ class LensParameterRegressor(nn.Module):
 
         # Load ResNet-18 (no pre-trained weights since astronomical data is very different from ImageNet)
         base_model = models.resnet18(weights=None)
-        
+
         # Modify the first convolutional layer to accept 1-channel (grayscale) inputs instead of 3
         base_model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
 
@@ -129,7 +129,7 @@ class LensParameterRegressor(nn.Module):
         for m in self.modules():
             if m.__class__.__name__.startswith('Dropout'):
                 m.train()
-                
+
         raw_preds = torch.stack(
             [self.forward(x) for _ in range(n_forward)], dim=1
         )  # (B, N, 5) normalised

@@ -125,7 +125,7 @@ def generate_hst_analogues(
 
     print(f"Generating {n_cutouts} HST-analogue cutouts...")
     print(f"Output: {output}")
-    print(f"Domain gap features: ICL background, cosmic rays, PSF variation, extra noise")
+    print("Domain gap features: ICL background, cosmic rays, PSF variation, extra noise")
 
     for i in tqdm(range(n_cutouts), desc="Generating"):
         # Mix of lensed and non-lensed (real survey has mostly non-lenses)

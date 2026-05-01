@@ -10,17 +10,14 @@ This script:
 """
 
 import argparse
-import json
-import os
 from pathlib import Path
 
 import numpy as np
 import torch
 import torch.nn as nn
-from sklearn.metrics import roc_auc_score, f1_score
+from sklearn.metrics import roc_auc_score
 from torch.optim import Adam
 from torch.utils.data import DataLoader, TensorDataset
-from tqdm import tqdm
 import xgboost as xgb
 
 from gravlensai.data.dataset import SimulatedLensDataset
@@ -89,17 +86,17 @@ def main():
     print("Loading datasets...")
     train_ds = SimulatedLensDataset("data/simulated/", split="train", task="classify", augment=False, split_seed=args.seed)
     val_ds = SimulatedLensDataset("data/simulated/", split="val", task="classify", augment=False, split_seed=args.seed)
-    
+
     val_loader = DataLoader(val_ds, batch_size=256, shuffle=False)
     # Subsample training data to prevent OOM kills on macOS
     print("Subsampling data for baselines to prevent memory issues...")
     indices = np.random.choice(len(train_ds), size=10000, replace=False)
     sub_images = train_ds.images[indices]
     sub_targets = train_ds.targets[indices]
-    
+
     x_train_flat = _flatten_images(sub_images)
     y_train = sub_targets.astype(np.int64)
-    
+
     x_val_flat = _flatten_images(val_ds.images)
     y_val = val_ds.targets.astype(np.int64)
 
@@ -113,10 +110,10 @@ def main():
     # 3. Train Baselines
     print("Training Random Forest...")
     rf_model = train_random_forest_baseline(x_train_flat, y_train, seed=args.seed)
-    
+
     print("Training Logistic Regression...")
     lr_model = train_logistic_regression_baseline(x_train_flat, y_train, seed=args.seed)
-    
+
     lightweight_model = train_lightweight_cnn(train_ds, val_loader, device)
 
     # 4. Generate Validation Predictions (Level-1 Features)
@@ -144,7 +141,7 @@ def main():
     # 6. Evaluate
     p_ensemble = meta_model.predict_proba(X_meta)[:, 1]
     metrics = classifier_metrics(y_val, p_ensemble)
-    
+
     print("\n" + "="*50)
     print("Ensemble Evaluation (Validation Set)")
     print("="*50)
@@ -162,16 +159,16 @@ def main():
         meta_model=meta_model,
         device=device
     )
-    
+
     out_path = "results/models/ensemble_xgb.json"
     ensemble.save(out_path)
-    
+
     # Also save the classical models so they can be loaded later
     import joblib
     joblib.dump(rf_model, "results/models/rf_baseline.joblib")
     joblib.dump(lr_model, "results/models/lr_baseline.joblib")
     torch.save(lightweight_model.state_dict(), "results/models/lightweight_cnn.pt")
-    
+
     print(f"\nSaved XGBoost model to {out_path}")
     print("Saved baseline components to results/models/")
 

@@ -60,7 +60,7 @@ def resolve_model_paths(args) -> tuple[str, str]:
 
 def load_models(classifier_path: str, regressor_path: str) -> None:
     global ensemble, lightweight_cnn
-    
+
     # Load checkpoints with weights_only=False since these are our own trusted models
     # saved during training (not from untrusted sources)
     if os.path.exists(classifier_path):
@@ -80,7 +80,7 @@ def load_models(classifier_path: str, regressor_path: str) -> None:
 
     classifier.to(DEVICE).eval()
     regressor.to(DEVICE).eval()
-    
+
     # Try loading Ensemble components
     try:
         if os.path.exists("results/models/ensemble_xgb.json"):
@@ -88,7 +88,7 @@ def load_models(classifier_path: str, regressor_path: str) -> None:
             lightweight_cnn.load_state_dict(torch.load("results/models/lightweight_cnn.pt", map_location=DEVICE, weights_only=False))
             rf = joblib.load("results/models/rf_baseline.joblib")
             lr = joblib.load("results/models/lr_baseline.joblib")
-            
+
             ensemble = EnsembleClassifier(classifier, lightweight_cnn, rf, lr, device=DEVICE)
             ensemble.load("results/models/ensemble_xgb.json")
             print("✓ XGBoost Meta-Ensemble loaded")
@@ -103,7 +103,7 @@ def preprocess_image(image_np):
     from gravlensai.data.normalisation import arcsinh_normalise
     if image_np.ndim == 3:
         image_np = image_np.mean(axis=2)  # RGB → grayscale
-        
+
     # Updated stats computed from the new lenstronomy-only Kaggle dataset
     global_stats = {'softening': 620.9315, 'mean': 1.1255, 'std': 0.9555}
     img = arcsinh_normalise(image_np.astype(np.float32), stats=global_stats)
@@ -128,15 +128,15 @@ def create_overlay_numpy(image_np, heatmap_np):
 
     disp_img = np.clip((disp_img - vmin) / (vmax - vmin), 0, 1)
     disp_img_8u = (disp_img * 255).astype(np.uint8)
-    
+
     # Base input image returned as grayscale RGB
     input_rgb = cv2.cvtColor(disp_img_8u, cv2.COLOR_GRAY2RGB)
-    
+
     # Heatmap is 0-1 float, convert to 0-255
     heatmap_8u = (heatmap_np * 255).astype(np.uint8)
     heatmap_color = cv2.applyColorMap(heatmap_8u, cv2.COLORMAP_JET)
     heatmap_color = cv2.cvtColor(heatmap_color, cv2.COLOR_BGR2RGB) # Convert to RGB for Gradio
-    
+
     # Overlay
     overlay = cv2.addWeighted(input_rgb, 0.5, heatmap_color, 0.5, 0)
     return input_rgb, overlay
@@ -144,14 +144,14 @@ def create_overlay_numpy(image_np, heatmap_np):
 
 def build_results_html(prob, clf_mean, clf_std, entropy, is_ood, ood_reason, params_mean, params_std, ensemble_prob=None, threshold=0.5):
     """Generate beautiful HTML cards for the results."""
-    
+
     final_prob = ensemble_prob if ensemble_prob is not None else prob
     is_lens = final_prob >= threshold
-    
+
     # Colors
     lens_color = "#00ff41" if is_lens else "#ff4444"
     lens_text = "LENS DETECTED" if is_lens else "NON-LENS"
-    
+
     html = f"""
     <div style='background: rgba(26, 26, 46, 0.7); backdrop-filter: blur(10px); padding: 20px; border-radius: 16px; border: 1px solid #30305a;'>
         <h2 style='color: {lens_color}; font-weight: 800; font-size: 24px; text-transform: uppercase; margin-top: 0;'>{lens_text}</h2>
@@ -166,7 +166,7 @@ def build_results_html(prob, clf_mean, clf_std, entropy, is_ood, ood_reason, par
             </div>
         </div>
     """
-    
+
     if is_ood:
         html += f"""
         <div style='background: rgba(255, 68, 68, 0.15); padding: 15px; border-radius: 12px; border: 1px solid rgba(255, 68, 68, 0.4); margin-top: 15px;'>
@@ -174,14 +174,14 @@ def build_results_html(prob, clf_mean, clf_std, entropy, is_ood, ood_reason, par
             <p style='color: #ffbaba; margin: 5px 0 0 0; font-size: 13px;'>{ood_reason}</p>
         </div>
         """
-        
+
     if is_lens and not is_ood:
         param_names = ['Einstein Radius (θ_E)', 'Ellipticity (e1)', 'Ellipticity (e2)', 'Shear (γ1)', 'Shear (γ2)', 'Dark Matter Mass']
         param_units = ['arcsec', '', '', '', '', 'log(M_☉)']
-        
+
         html += "<h3 style='color: #cbd5e1; margin-top: 25px; border-bottom: 1px solid #30305a; padding-bottom: 8px;'>6-Dimensional Physics Regressor</h3>"
         html += "<div style='display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 15px;'>"
-        
+
         for name, mean, std, unit in zip(param_names, params_mean, params_std, param_units):
             # Highlight Dark matter mass
             color = "#a78bfa" if "Dark Matter" in name else "white"
@@ -192,7 +192,7 @@ def build_results_html(prob, clf_mean, clf_std, entropy, is_ood, ood_reason, par
             </div>
             """
         html += "</div>"
-        
+
     html += "</div>"
     return html
 
@@ -214,15 +214,15 @@ def analyze_image(image_np, n_mc_samples, threshold):
     clf_mean = unc['mean'].item()
     clf_std = unc['std'].item()
     entropy = unc['entropy'].item()
-    
+
     # Check for OOD
     if image_np.ndim == 3:
         display_img = image_np.mean(axis=2)
     else:
         display_img = image_np
-        
+
     is_ood, ood_reason = ood_detector.detect(display_img, entropy)
-    
+
     # Optional Ensemble
     ensemble_prob = None
     if ensemble is not None:
@@ -244,11 +244,11 @@ def analyze_image(image_np, n_mc_samples, threshold):
 
     # Generate Image Visuals
     input_rgb, gradcam_overlay = create_overlay_numpy(display_img, heatmap)
-    
+
     # Scale up the 64x64 images to 256x256 for the UI so they don't look tiny
     input_rgb = cv2.resize(input_rgb, (256, 256), interpolation=cv2.INTER_CUBIC)
     gradcam_overlay = cv2.resize(gradcam_overlay, (256, 256), interpolation=cv2.INTER_CUBIC)
-    
+
     # Generate HTML Stats
     stats_html = build_results_html(prob, clf_mean, clf_std, entropy, is_ood, ood_reason, params_mean, params_std, ensemble_prob, threshold)
 
@@ -292,7 +292,7 @@ body {
 }
 .gradio-container {
     background-color: #05070e !important;
-    background-image: radial-gradient(circle at top right, #1a1a3a, transparent 400px), 
+    background-image: radial-gradient(circle at top right, #1a1a3a, transparent 400px),
                       radial-gradient(circle at bottom left, #0d1b2a, transparent 400px) !important;
     max-width: 100% !important;
     min-height: 100vh !important;

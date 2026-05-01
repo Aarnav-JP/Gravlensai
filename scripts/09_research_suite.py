@@ -19,7 +19,6 @@ from gravlensai.evaluate.metrics import (
     bootstrap_classifier_ci,
     bootstrap_regressor_ci,
     classifier_metrics,
-    regressor_metrics,
 )
 from gravlensai.evaluate.visualise import plot_confusion_matrix
 from gravlensai.models.baselines import (

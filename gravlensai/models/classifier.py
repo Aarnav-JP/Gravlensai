@@ -86,7 +86,7 @@ class LensClassifier(nn.Module):
         for m in self.modules():
             if m.__class__.__name__.startswith('Dropout'):
                 m.train()
-                
+
         preds = torch.stack(
             [torch.sigmoid(self.forward(x)) for _ in range(n_forward)], dim=1
         )

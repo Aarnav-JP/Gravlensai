@@ -46,7 +46,7 @@ class LensParameters:
     source_offset_y: float      # Source position offset y arcsec, range [-0.3, 0.3]
     flux_lens: float            # Lens galaxy total flux (ADU)
     flux_source: float          # Source galaxy total flux (ADU)
-    
+
     # Dark Matter Subhalo Properties
     subhalo_mass: float         # Log10(M_sun), range [8.0, 10.0]
     subhalo_x: float            # Subhalo x position arcsec
@@ -143,7 +143,7 @@ class LensImageGenerator:
 
         # --- Lens model: SIE + external shear + Dark Matter NFW Subhalo ---
         lens_model = LensModel(lens_model_list=['SIE', 'SHEAR', 'NFW'])
-        
+
         # Convert subhalo mass proxy to NFW deflection angle
         # 10^8 M_sun ~ 0.005 arcsec, 10^10 M_sun ~ 0.05 arcsec (roughly linear in log)
         alpha_Rs = 0.005 + (params.subhalo_mass - 8.0) * (0.045 / 2.0)
@@ -220,26 +220,26 @@ class LensImageGenerator:
 
     def _render_galaxy(self, params: LensParameters) -> np.ndarray:
         """
-        Render a non-lensed galaxy image using Lenstronomy to match the lensed dataset's 
+        Render a non-lensed galaxy image using Lenstronomy to match the lensed dataset's
         simulation rendering engine and avoid simulation artifact bias.
         """
         kwargs_data = data_configure_simple(numPix=self.IMAGE_SIZE, deltaPix=self.PIXEL_SCALE, exposure_time=1.0, background_rms=1.0)
         data_class = ImageData(**kwargs_data)
         psf_kernel = make_psf_kernel(fwhm=0.1, pixel_scale=self.PIXEL_SCALE, size=21)
         psf_class = LenstronomyPSF(psf_type='PIXEL', kernel_point_source=psf_kernel)
-        
+
         lens_model = LensModel(lens_model_list=[])
         source_light_model = LightModel(light_model_list=['SERSIC_ELLIPSE'])
         kwargs_source = [{
-            'amp': params.flux_lens, 
-            'R_sersic': params.lens_half_light, 
-            'n_sersic': params.lens_sersic_n, 
-            'e1': params.ellipticity_e1, 
-            'e2': params.ellipticity_e2, 
-            'center_x': 0.0, 
+            'amp': params.flux_lens,
+            'R_sersic': params.lens_half_light,
+            'n_sersic': params.lens_sersic_n,
+            'e1': params.ellipticity_e1,
+            'e2': params.ellipticity_e2,
+            'center_x': 0.0,
             'center_y': 0.0
         }]
-        
+
         image_model = ImageModel(data_class=data_class, psf_class=psf_class, lens_model_class=lens_model, source_model_class=source_light_model)
         return image_model.image(kwargs_source=kwargs_source).astype(np.float32)
 

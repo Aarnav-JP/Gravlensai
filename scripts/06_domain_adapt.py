@@ -22,7 +22,6 @@ Usage:
 import argparse
 import torch
 import torch.nn as nn
-import numpy as np
 import time
 import yaml  # type: ignore[import-untyped]
 from pathlib import Path
@@ -286,7 +285,7 @@ def main(args):
     }, output_path)
 
     print(f"\n{'='*60}")
-    print(f"Domain adaptation complete!")
+    print("Domain adaptation complete!")
     print(f"  Method: {method.upper()}")
     print(f"  Epochs: {epochs}")
     print(f"  Time: {elapsed:.1f}s ({elapsed/60:.1f} min)")

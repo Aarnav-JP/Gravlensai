@@ -60,7 +60,7 @@ def main(args):
     print(f"  images_lens.npy:    shape={images_lens.shape}, dtype={images_lens.dtype}")
     print(f"  params_lens.npy:    shape={params_lens.shape}, dtype={params_lens.dtype}")
     print(f"  images_nonlens.npy: shape={images_nonlens.shape}, dtype={images_nonlens.dtype}")
-    print(f"\nParam ranges:")
+    print("\nParam ranges:")
     names = ['θ_E', 'e1', 'e2', 'γ1', 'γ2', 'M_sub']
     for i, name in enumerate(names):
         col = params_lens[:, i]

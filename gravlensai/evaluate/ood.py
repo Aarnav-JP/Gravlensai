@@ -1,7 +1,7 @@
 """
 Out-of-Distribution (OOD) Detection.
 
-Identifies whether an input image is likely an artifact (cosmic ray, sensor noise, 
+Identifies whether an input image is likely an artifact (cosmic ray, sensor noise,
 or unrecognised telescope anomaly) rather than a clean galaxy image, using
 epistemic uncertainty (MC Dropout entropy) and morphological heuristics.
 """

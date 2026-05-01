@@ -37,7 +37,7 @@ class EnsembleClassifier:
         self.rf = rf_model
         self.lr = lr_model
         self.meta_model_path = None # Store path instead of model to run in subprocess
-        
+
         self.device = device or torch.device("cpu")
         self.resnet.to(self.device).eval()
         self.lightweight.to(self.device).eval()
@@ -70,9 +70,9 @@ class EnsembleClassifier:
         """
         if self.meta_model_path is None:
             raise ValueError("XGBoost meta-classifier has not been loaded.")
-            
+
         features = self._extract_base_features(x)
-        
+
         try:
             import xgboost as xgb
             m = xgb.XGBClassifier()

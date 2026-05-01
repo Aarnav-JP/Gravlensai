@@ -22,7 +22,6 @@ from torch.optim import AdamW
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from pathlib import Path
 from tqdm import tqdm
-import numpy as np
 import os
 
 from gravlensai.data.dataset import SimulatedLensDataset
