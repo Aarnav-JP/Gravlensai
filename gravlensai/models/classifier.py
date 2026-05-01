@@ -39,11 +39,10 @@ class LensClassifier(nn.Module):
             drop_rate=dropout,
             attn_drop_rate=dropout
         )
-        self.feature_projection = nn.Linear(self.model.num_features, 512)
-        self.features = nn.Sequential(
-            self.model.patch_embed.proj,
-            nn.Identity(),
-        )
+        # ViT outputs 192-dim CLS embeddings; project to 512 for backward compatibility
+        # num_features is an int attribute but mypy infers it as Tensor | Module
+        num_features: int = self.model.num_features  # type: ignore[assignment]
+        self.feature_projection = nn.Linear(num_features, 512)
 
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
@@ -117,6 +116,6 @@ class LensClassifier(nn.Module):
             (B, 512) projected CLS token feature tensor from the ViT backbone.
         """
         # ViT backbone uses forward_features; the CLS token is at index 0
-        features = self.model.forward_features(x)  # (B, N_tokens, embed_dim)
+        features = self.model.forward_features(x)  # type: ignore[operator]
         cls_features = features[:, 0, :]
         return self.feature_projection(cls_features)

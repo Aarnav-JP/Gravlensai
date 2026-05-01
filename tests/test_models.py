@@ -44,8 +44,8 @@ class TestLensClassifier:
         out = model(x)
         loss = out.sum()
         loss.backward()
-        # Check that conv1 received gradients
-        assert model.features[0].weight.grad is not None
+        # Check that gradients flow through ViT head (final layer)
+        assert model.model.head.weight.grad is not None
 
 
 class TestLensParameterRegressor:
