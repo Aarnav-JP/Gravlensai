@@ -1,0 +1,6 @@
+app:
+  classifier_path: results/models/classifier_best.pt
+  regressor_path: results/models/regressor_best.pt
+  server_name: 127.0.0.1
+  server_port: 7860
+  share: false

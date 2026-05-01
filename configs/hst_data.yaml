@@ -1,0 +1,5 @@
+hst_data:
+  seed: 42
+  cluster: Abell 2744
+  output: data/raw/hst/
+  n_cutouts: 500

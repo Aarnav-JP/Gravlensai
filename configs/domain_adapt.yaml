@@ -1,0 +1,23 @@
+domain_adaptation:
+  method: mmd                 # 'mmd' or 'dann'
+
+  mmd:
+    kernel_bandwidths: [1.0, 2.0, 4.0, 8.0]
+    lambda_mmd: 0.1           # Weight of MMD loss relative to task loss
+
+  dann:
+    hidden_dim: 256
+    lambda_dann: 1.0          # Weight of adversarial loss
+    alpha_schedule: gradual   # Gradient reversal strength annealing
+
+  fine_tuning:
+    seed: 42
+    epochs: 10
+    learning_rate: 1.0e-5
+    batch_size: 32
+    freeze_backbone_layers: 0  # 0 = fine-tune all layers
+
+  target_data:
+    cluster: "Abell_2744"     # Start with one cluster
+    cutout_dir: "data/raw/hst/Abell_2744/"
+    n_cutouts: 500

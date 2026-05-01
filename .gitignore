@@ -1,0 +1,59 @@
+# ── Data ──────────────────────────────────────────────────────────────────
+data/
+!data/.gitkeep
+
+# ── Model checkpoints & large binaries ────────────────────────────────────
+results/models/*.pt
+results/models/*.joblib
+results/models/*.json
+results/models/tensorboard_classifier/
+results/models/tensorboard_regressor/
+results/predictions/
+results/figures/
+results/hpo/
+results/reports/
+results/research/
+results/research_smoke/
+# Keep the .gitkeep placeholder so the directory is committed
+!results/models/.gitkeep
+
+# ── Python ────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+*.egg
+
+# ── Virtual environments ───────────────────────────────────────────────────
+venv/
+.venv/
+env/
+
+# ── IDE ───────────────────────────────────────────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ── OS ────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Jupyter ───────────────────────────────────────────────────────────────
+.ipynb_checkpoints/
+
+# ── Test & coverage artifacts ─────────────────────────────────────────────
+.coverage
+.pytest_cache/
+.mypy_cache/
+
+# ── Logs & misc ───────────────────────────────────────────────────────────
+*.log
+
+# ── Kaggle-specific upload/download artifacts ─────────────────────────────
+kaggle_upload/
+keggle_results/
+*.zip

@@ -1,0 +1,41 @@
+research:
+  seed: 42
+  data:
+    simulated_dir: data/simulated/
+    hst_root_dir: data/raw/hst/
+    auto_discover_clusters: true
+    hst_clusters:
+      - data/raw/hst/Abell_2744/
+  outputs:
+    root_dir: results/research
+    report_path: results/reports/research_report.md
+  checkpoints:
+    classifier: results/models/classifier_best.pt
+    regressor: results/models/regressor_best.pt
+    adapted_classifier: results/models/classifier_adapted.pt
+  baselines:
+    enable_classical: true
+    enable_lightweight_cnn: true
+    lightweight_epochs: 5
+    lightweight_lr: 5.0e-4
+    batch_size: 64
+  bootstrap:
+    n_bootstrap: 300
+    threshold: 0.5
+  domain_ablation:
+    methods:
+      - baseline
+      - mmd
+      - dann
+    adaptation:
+      epochs: 4
+      learning_rate: 1.0e-5
+      batch_size: 32
+      lambda_mmd: 0.1
+      lambda_dann: 1.0
+      pos_weight: 3.0
+      max_steps_per_epoch: 200
+  taxonomy:
+    high_confidence_fp_threshold: 0.8
+    high_confidence_fn_threshold: 0.2
+    n_example_panels: 12

@@ -1,0 +1,93 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.10", "3.12"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Cache pip packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+
+      - name: Run tests
+        run: |
+          python -m pytest tests/ -v --tb=short --cov=gravlensai --cov-report=term-missing --cov-fail-under=55
+
+      - name: Check imports
+        run: |
+          python -c "from gravlensai.models.classifier import LensClassifier; print('✓ classifier')"
+          python -c "from gravlensai.models.regressor import LensParameterRegressor; print('✓ regressor')"
+          python -c "from gravlensai.evaluate.grad_cam import GradCAM; print('✓ grad_cam')"
+          python -c "from gravlensai.evaluate.metrics import expected_calibration_error; print('✓ metrics')"
+
+      - name: Reproducibility smoke check
+        run: |
+          python - <<'PY'
+          import torch
+          import numpy as np
+          from gravlensai.utils.reproducibility import set_global_seed
+
+          set_global_seed(123)
+          a1 = torch.rand(5)
+          b1 = np.random.rand(5)
+
+          set_global_seed(123)
+          a2 = torch.rand(5)
+          b2 = np.random.rand(5)
+
+          assert torch.allclose(a1, a2), "Torch RNG not reproducible"
+          assert np.allclose(b1, b2), "NumPy RNG not reproducible"
+          print("✓ reproducibility smoke check")
+          PY
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: |
+          python -m pip install --upgrade pip
+          pip install -e .[dev]
+      - run: ruff check gravlensai/ scripts/ app.py --select E,F,W --ignore E501
+      - run: mypy gravlensai
+
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Build distribution artifacts
+        run: |
+          python -m pip install --upgrade pip
+          pip install build twine
+          python -m build
+          python -m twine check dist/*

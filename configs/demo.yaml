@@ -1,0 +1,4 @@
+demo:
+  seed: 42
+  models_dir: results/models/
+  lenstool_seconds_per_image: 120

@@ -1,0 +1,6 @@
+evaluate:
+  seed: 42
+  batch_size: 64
+  uncertainty_samples: 20
+  calibration_bins: 10
+  lenstool_seconds_per_image: 120

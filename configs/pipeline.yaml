@@ -1,0 +1,15 @@
+pipeline:
+  generate_data: true
+  train_classifier: true
+  train_regressor: true
+  evaluate: true
+  seed: 42
+
+  simulation_config: configs/simulation.yaml
+  classifier_config: configs/classifier.yaml
+  regressor_config: configs/regressor.yaml
+  evaluate_config: configs/evaluate.yaml
+
+  data_dir: data/simulated/
+  models_dir: results/models/
+  output_dir: results/

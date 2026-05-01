@@ -1,0 +1,25 @@
+classifier:
+  model:
+    backbone: resnet18
+    in_channels: 1
+    dropout: 0.3
+
+  training:
+    epochs: 50
+    batch_size: 64
+    learning_rate: 1.0e-4
+    weight_decay: 1.0e-4
+    pos_weight: 3.0           # BCEWithLogitsLoss weighting for recall
+    grad_clip: 1.0
+
+  scheduler:
+    type: cosine_annealing
+    eta_min: 1.0e-6
+
+  evaluation:
+    threshold: 0.5
+
+  expected_metrics:
+    val_auc: 0.97
+    val_precision: 0.92
+    val_recall: 0.89

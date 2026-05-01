@@ -1,0 +1,4 @@
+hst_analogues:
+  seed: 42
+  n_cutouts: 500
+  output: data/raw/hst/Abell_2744/
