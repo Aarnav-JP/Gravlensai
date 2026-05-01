@@ -12,9 +12,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')  # Non-interactive backend
 import matplotlib.pyplot as plt
-import matplotlib.gridspec as gridspec
 from pathlib import Path
-from typing import Optional
 
 plt.rcParams.update({
     'font.family': 'serif',

@@ -113,7 +113,7 @@ def demo_simulate(models, device, seed=None, lenstool_seconds_per_image: float =
     print(f"Generated a 64×64 simulated lens image (seed={seed})")
 
     if true_params:
-        print(f"\nGround Truth:")
+        print("\nGround Truth:")
         tgt = true_params.regression_targets(include_subhalo='regressor' in models and models['regressor'].output_dim > 5)
         names = ['θ_E', 'e1', 'e2', 'γ1', 'γ2']
         if len(tgt) > 5:
@@ -135,7 +135,7 @@ def demo_simulate(models, device, seed=None, lenstool_seconds_per_image: float =
 
         # Compare if ground truth available
         if true_params:
-            print(f"\nErrors:")
+            print("\nErrors:")
             pred_vals = list(results['parameters'].values())
             for name, pred, true in zip(names, pred_vals, tgt):
                 error = abs(pred - true)
@@ -182,7 +182,7 @@ def demo_image(image_path, models, device):
         print(f"  Confidence: {prob:.4f} ({results['classifier_ms']:.1f} ms)")
 
     if results.get('is_lens', True) and 'parameters' in results:
-        print(f"\nEstimated Lens Parameters:")
+        print("\nEstimated Lens Parameters:")
         for name, val in results['parameters'].items():
             print(f"  {name:16s}: {val:+.4f}")
 

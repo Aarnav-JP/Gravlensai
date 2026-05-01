@@ -123,8 +123,9 @@ def create_overlay_numpy(image_np, heatmap_np):
     from gravlensai.data.normalisation import arcsinh_stretch
     disp_img = arcsinh_stretch(image_np)
     vmin, vmax = np.percentile(disp_img, [1, 99])
-    if vmax == vmin: vmax += 1e-5
-    
+    if vmax == vmin:
+        vmax += 1e-5
+
     disp_img = np.clip((disp_img - vmin) / (vmax - vmin), 0, 1)
     disp_img_8u = (disp_img * 255).astype(np.uint8)
     

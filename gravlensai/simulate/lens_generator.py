@@ -13,8 +13,8 @@ Reference: Hezaveh et al. 2017 (Nature), Metcalf et al. 2019 (A&A)
 
 import galsim
 import numpy as np
-from dataclasses import dataclass, asdict
-from typing import Tuple, Optional
+from dataclasses import dataclass
+from typing import Tuple
 
 from lenstronomy.LensModel.lens_model import LensModel
 from lenstronomy.LightModel.light_model import LightModel
@@ -124,7 +124,6 @@ class LensImageGenerator:
         Returns the lensed source image as a (64, 64) array.
         """
         # Configure the data/coordinate grid
-        fov = self.IMAGE_SIZE * self.PIXEL_SCALE  # 3.2 arcsec
         kwargs_data = data_configure_simple(
             numPix=self.IMAGE_SIZE,
             deltaPix=self.PIXEL_SCALE,

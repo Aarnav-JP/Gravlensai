@@ -6,7 +6,6 @@ Extracted as a reusable module for use by scripts and notebooks.
 import torch
 import torch.nn as nn
 import numpy as np
-from torch.utils.data import DataLoader
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import CosineAnnealingLR
 from tqdm import tqdm

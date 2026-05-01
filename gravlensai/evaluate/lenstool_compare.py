@@ -10,7 +10,6 @@ provides utilities to:
 
 import numpy as np
 from typing import Optional
-from pathlib import Path
 
 
 # Typical LENSTOOL runtimes per lens system (from literature)
@@ -130,7 +129,7 @@ def print_comparison_report(comparison: dict, speedup: dict):
         print(f"    RMSE: {vals['rmse']:.4f}")
         print(f"    Correlation: {vals['correlation']:.4f}")
 
-    print(f"\nSpeedup:")
+    print("\nSpeedup:")
     print(f"  CNN:      {speedup['cnn_ms_per_image']:.2f} ms/image")
     print(f"  LENSTOOL: {speedup['lenstool_s_per_image']} s/image ({speedup['lenstool_mode']})")
     print(f"  Speedup:  {speedup['speedup_factor']:,.0f}×")

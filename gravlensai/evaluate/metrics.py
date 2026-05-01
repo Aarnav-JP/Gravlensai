@@ -19,7 +19,6 @@ import numpy as np
 from sklearn.metrics import (precision_score, recall_score, f1_score,
                               roc_auc_score, precision_recall_curve,
                               confusion_matrix)
-import time
 
 
 PARAM_NAMES = ['Einstein_radius_arcsec', 'e1', 'e2', 'gamma1', 'gamma2', 'subhalo_mass']

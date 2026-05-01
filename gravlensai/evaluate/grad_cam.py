@@ -15,7 +15,7 @@ import numpy as np
 import matplotlib
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-from typing import Optional, Tuple
+from typing import Optional
 
 
 class GradCAM:
@@ -191,7 +191,7 @@ def plot_cam_grid(
 
         # Column 3: Pure heatmap
         ax = axes[row, 2]
-        im = ax.imshow(cam, cmap='magma', origin='lower', vmin=0, vmax=1)
+        ax.imshow(cam, cmap='magma', origin='lower', vmin=0, vmax=1)
         ax.set_xticks([])
         ax.set_yticks([])
 

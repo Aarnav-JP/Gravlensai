@@ -9,7 +9,6 @@ Typical ranges (SLACS-calibrated):
 
 import galsim
 import numpy as np
-from typing import Optional
 
 
 def make_sersic_galaxy(

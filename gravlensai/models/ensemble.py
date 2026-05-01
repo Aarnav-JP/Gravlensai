@@ -4,7 +4,6 @@ XGBoost Meta-Ensemble combining Deep Learning and Classical ML features.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +15,6 @@ import torch
 # for research reproducibility only.
 
 
-from gravlensai.models.baselines import LightweightLensCNN
 
 
 class EnsembleClassifier:

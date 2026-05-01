@@ -5,8 +5,6 @@ Operates on lensed images only (positive class).
 
 import torch
 import torch.nn as nn
-import numpy as np
-from torch.utils.data import DataLoader
 from torch.optim import AdamW
 from torch.optim.lr_scheduler import ReduceLROnPlateau
 from tqdm import tqdm

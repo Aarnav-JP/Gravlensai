@@ -5,7 +5,6 @@ Training callbacks: early stopping, model checkpointing, metric logging.
 import numpy as np
 import torch
 from pathlib import Path
-from typing import Optional
 
 
 class EarlyStopping:
