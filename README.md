@@ -22,41 +22,38 @@
 
 | Metric | Simulated Test Set | Real HST Data (Frontier Fields) |
 | :--- | :--- | :--- |
-| **Detection Rate (F1)** | **0.705** | **84.8%** (calibrated) |
+| **Detection Rate (F1)** | **0.705** | **0.848%** (calibrated) |
 | **Inference Speed** | **0.16 ms/image** | 0.16 ms/image |
 | **Einstein Radius RMSE** | **0.235 arcsec** | N/A (unlabelled) |
-
-### Key Features
-- 🎯 **Dual-Task Architecture**: Binary classification (ViT-Tiny) + 6-parameter regression (ResNet-18)
-- 🧪 **Subhalo Sensitivity**: Trained to detect and characterize dark matter subhalo perturbations ($10^8$ to $10^{10} M_\odot$)
-- 🔍 **Interpretability**: Integrated Grad-CAM visualization for model transparency
-- 📊 **Research-Grade Evaluation**: Comprehensive metrics with automated Kaggle verification workflow
-- 🚀 **Scalable Training**: Verified Kaggle T4 GPU workflow (~35 min for full 60k image pipeline)
 
 ---
 
 ## Results Summary
 
-### Classification Performance (Test Set: 60,000 images)
+### 1. Classifier Performance (ViT-Tiny)
+The model was evaluated on a balanced test set of 60,000 images.
 
 | Metric | Value | Note |
 | :--- | :--- | :--- |
 | **Precision** | 0.5725 | Optimized for survey completeness |
-| **Recall** | 0.9191 | Captures 92% of lens candidates |
+| **Recall** | 0.9191 | Captures ~92% of lens candidates |
 | **F1-Score** | **0.7055** | Balanced performance on synthetic data |
-| **AUC-ROC** | 0.8214 | Strong class discrimination |
-| **Inference Time** | **0.16 ms/image** | Single NVIDIA T4 GPU |
+| **AUC-ROC** | **0.8214** | Strong class discrimination |
+| **Threshold** | 0.5000 | Standard decision boundary |
 
-### Regression Accuracy (Test Set: 6,000 images)
+*Note: The precision/recall balance indicates a conservative detection threshold optimized for survey completeness (minimizing False Negatives).*
 
-| Parameter | RMSE | Median Error | 68% Percentile | Unit |
+### 2. Regression Accuracy (ResNet-18)
+Recovering 6 physical parameters simultaneously from 64×64 pixel inputs.
+
+| Parameter | RMSE | Median Error | P68 (Spread) | Unit |
 | :--- | :--- | :--- | :--- | :--- |
-| Einstein Radius (theta_E) | 0.235 | **0.039** | 0.064 | arcsec |
-| Ellipticity (e1) | 0.098 | 0.067 | 0.098 | — |
-| Ellipticity (e2) | 0.099 | 0.066 | 0.098 | — |
-| Shear Component (gamma1) | 0.020 | 0.013 | 0.020 | — |
-| Shear Component (gamma2) | 0.020 | 0.014 | 0.020 | — |
-| **Subhalo Mass** | 0.572 | **0.494** | 0.668 | log₁₀(M☉) |
+| **Einstein Radius (theta_E)** | 0.2349 | **0.0390** | 0.0644 | arcsec |
+| **Ellipticity (e1)** | 0.0980 | 0.0673 | 0.0977 | — |
+| **Ellipticity (e2)** | 0.0991 | 0.0661 | 0.0977 | — |
+| **External Shear (gamma1)** | 0.0197 | 0.0132 | 0.0199 | — |
+| **External Shear (gamma2)** | 0.0195 | 0.0135 | 0.0196 | — |
+| **Subhalo Mass** | 0.5720 | **0.4938** | 0.6677 | log₁₀(M☉) |
 
 *Einstein radius median error of 0.039 arcsec is competitive with published state-of-the-art results (e.g., Hezaveh et al. 2017).*
 
@@ -104,7 +101,6 @@ For high-performance training and figure generation, we provide a verified Kaggl
 
 ## Documentation
 - [Architecture Deep Dive](ARCHITECTURE.md)
-- [Kaggle Verification Report](results/reports/KAG_REPORT.md)
 - [Contributing guide](CONTRIBUTING.md)
 
 ---
