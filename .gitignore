@@ -12,7 +12,7 @@ results/predictions/
 results/figures/*
 !results/figures/*.png
 results/hpo/
-results/reports/
+# results/reports/  <-- ALLOWED
 results/research/
 results/research_smoke/
 # Keep the .gitkeep placeholder so the directory is committed

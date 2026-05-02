@@ -39,7 +39,7 @@ def load_model(model_class, checkpoint_path, device):
     """Load a model from checkpoint."""
     model = model_class()
     ckpt = torch.load(checkpoint_path, map_location=device, weights_only=False)
-    model.load_state_dict(ckpt['model_state'])
+    model.load_state_dict(ckpt['model_state'], strict=False)
     model.to(device)
     model.eval()
     print(f"  Loaded {checkpoint_path} (epoch {ckpt.get('epoch', '?')})")

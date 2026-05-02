@@ -57,7 +57,7 @@ def plot_detection_grid(images, probs, labels=None, n=16, save_path=None):
         color = 'lime' if p > 0.8 else 'orange' if p > 0.5 else 'red'
         title = f"p={p:.3f}"
         if labels is not None:
-            gt = "✓" if labels[data_i] == 1 else "✗"
+            gt = "[V]" if labels[data_i] == 1 else "[X]"
             title += f" {gt}"
         ax.set_title(title, fontsize=9, color=color, pad=2)
         ax.axis('off')
@@ -89,7 +89,7 @@ def plot_parameter_recovery(y_true, y_pred, save_path=None):
     Returns:
         matplotlib Figure.
     """
-    names = ['θ_E (arcsec)', 'e1', 'e2', 'γ1', 'γ2']
+    names = ['theta_E (arcsec)', 'e1', 'e2', 'gamma1', 'gamma2']
 
     fig, axes = plt.subplots(1, 5, figsize=(18, 4))
 
@@ -330,7 +330,7 @@ def plot_residual_histograms(y_true, y_pred, save_path=None):
     Returns:
         matplotlib Figure.
     """
-    names = ['θ_E (arcsec)', 'e1', 'e2', 'γ1', 'γ2']
+    names = ['theta_E (arcsec)', 'e1', 'e2', 'gamma1', 'gamma2']
     residuals = y_pred - y_true
 
     fig, axes = plt.subplots(1, 5, figsize=(20, 4))
