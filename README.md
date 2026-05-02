@@ -7,9 +7,13 @@
 **GravLensAI** is a Python package for automated lens detection (classification) and parameter estimation (regression) from 64×64 grayscale images. It trains on physically realistic simulations generated with `lenstronomy` and `GalSim`, with support for domain adaptation to real data.
 
 **Performance on simulated test data:**
-- Classification: 99.95% F1, 0.16 ms/image inference
-- Regressor: median Einstein radius error 0.034 arcsec
+- Classification benchmark: 99.95% F1, 0.16 ms/image inference
+- Regressor benchmark: median Einstein radius error 0.034 arcsec
 - ~150,000× faster inference than full ray-tracing (120 s vs 0.16 ms per image)
+
+**Real-data validation:**
+- Domain-adapted HST-like detection rate: 84.8%
+- This is the more realistic number to cite when discussing transfer to real survey data
 
 ### Key Features
 
@@ -137,8 +141,9 @@ python scripts/04_train_regressor.py --config configs/regressor.yaml
 python scripts/05_evaluate.py --config configs/evaluate.yaml
 
 # Step 5: View results
-open results/figures/classifier_roc.png
-open results/figures/regressor_errors.png
+open results/figures/roc_pr_curves.png
+open results/figures/parameter_recovery.png
+open results/figures/detection_grid.png
 ```
 
 ### Path 3: Advanced Usage (hyperparameter tuning, domain adaptation)
@@ -155,8 +160,6 @@ python scripts/09_research_suite.py --config configs/research.yaml
 ```
 
 ---
-
-## Architecture Deep Dive
 
 ## Architecture Deep Dive
 
@@ -429,6 +432,8 @@ See [requirements.txt](requirements.txt) and [pyproject.toml](pyproject.toml) fo
 
 ---
 
+docs(readme): Add domain adaptation section
+test(metrics): Increase coverage to 85%
 ## Future Work
 
 Potential areas for improvement:
@@ -439,403 +444,10 @@ Potential areas for improvement:
 
 ---
 
-## Contributing to GravLensAI
+## Documentation & Contribution
 
-We welcome contributions from the community! Whether you're fixing bugs, adding features, improving documentation, or sharing research insights, your help makes GravLensAI better for everyone.
-
-For questions about contributing, reach out: **aarnavjp@gmail.com**
-
-### Getting Started for Contributors
-
-#### 1. Fork & Clone the Repository
-
-```bash
-# Fork on GitHub, then clone your fork
-git clone https://github.com/yourusername/Gravlensai.git
-cd Gravlensai
-
-# Add upstream remote for keeping in sync
-git remote add upstream https://github.com/Aarnav-JP/Gravlensai.git
-```
-
-#### 2. Set Up Development Environment
-
-```bash
-# Create virtual environment
-python3 -m venv .venv
-source .venv/bin/activate  # or: .venv\Scripts\activate on Windows
-
-# Install in editable mode with dev dependencies
-pip install -e ".[dev]"
-
-# Verify installation
-python -c "import gravlensai; print(gravlensai.__version__)"
-```
-
-#### 3. Create a Feature Branch
-
-```bash
-# Keep main clean, work on feature branches
-git checkout -b feature/your-feature-name
-
-# Or for bug fixes:
-git checkout -b fix/issue-description
-```
-
-### Code Style & Quality
-
-#### Python Style Guide
-
-We follow **PEP 8** with these conventions:
-
-```python
-# ✅ Good: Clear names, docstrings, type hints
-def compute_einstein_radius(mass: float, redshift: float) -> float:
-    """
-    Compute Einstein radius for a point-mass lens.
-    
-    Args:
-        mass: Lens mass in solar masses
-        redshift: Lens redshift
-        
-    Returns:
-        Einstein radius in arcseconds
-    """
-    return calculate_theta_e(mass, redshift)
-
-# ❌ Avoid: Vague names, no docstrings
-def calc_er(m, z):
-    return th(m, z)
-```
-
-#### Linting & Formatting
-
-```bash
-# Format code with black
-black gravlensai/ scripts/
-
-# Check for style issues with ruff
-ruff check gravlensai/ scripts/
-
-# Type checking with mypy
-mypy gravlensai/ --ignore-missing-imports
-```
-
-These are configured in `pyproject.toml`. Run before committing:
-
-```bash
-black gravlensai/ && ruff check --fix gravlensai/ && mypy gravlensai/
-```
-
-### Testing Requirements
-
-All contributions must include tests. We maintain >80% code coverage.
-
-#### Writing Tests
-
-```python
-# tests/test_my_feature.py
-import pytest
-import torch
-from gravlensai.models import MyNewModel
-
-def test_model_output_shape():
-    """Test that model output has correct shape."""
-    model = MyNewModel()
-    x = torch.randn(4, 1, 64, 64)
-    output = model(x)
-    assert output.shape == (4, 1), f"Expected (4, 1), got {output.shape}"
-
-@pytest.mark.parametrize("input_size", [32, 64, 128])
-def test_model_various_sizes(input_size):
-    """Test model works with different input sizes."""
-    model = MyNewModel()
-    x = torch.randn(2, 1, input_size, input_size)
-    output = model(x)
-    assert output.shape[0] == 2
-
-def test_model_device_compatibility():
-    """Test model works on CPU and CUDA (if available)."""
-    devices = ['cpu']
-    if torch.cuda.is_available():
-        devices.append('cuda')
-    
-    for device in devices:
-        model = MyNewModel().to(device)
-        x = torch.randn(2, 1, 64, 64).to(device)
-        output = model(x)
-        assert output.device.type == device
-```
-
-#### Running Tests
-
-```bash
-# Run all tests
-pytest tests/ -v
-
-# Run specific test file
-pytest tests/test_models.py -v
-
-# Run with coverage report
-pytest tests/ --cov=gravlensai --cov-report=html
-
-# Run only fast tests (useful during development)
-pytest tests/ -m "not slow" -v
-```
-
-### Pull Request Workflow
-
-#### 1. Keep Your Fork Synced
-
-```bash
-# Before starting new work
-git fetch upstream
-git rebase upstream/main
-```
-
-#### 2. Make Focused Changes
-
-- One feature/fix per PR
-- Keep commits atomic and descriptive:
-
-```bash
-git commit -m "feat: Add MMD domain adaptation layer
-
-- Implement multi-kernel RBF alignment
-- Add configurable kernel bandwidth
-- Include unit tests for gradient flow
-- Closes #42"
-```
-
-#### 3. Write Comprehensive Commit Messages
-
-Follow [Conventional Commits](https://www.conventionalcommits.org/):
-
-```
-<type>(<scope>): <subject>
-
-<body>
-
-<footer>
-```
-
-Types: `feat`, `fix`, `docs`, `refactor`, `test`, `perf`, `chore`
-
-```bash
-feat(models): Add ViT-based lens classifier
-fix(data): Correct arcsinh normalization edge cases
-docs(readme): Add domain adaptation section
-test(metrics): Increase coverage to 85%
-```
-
-#### 4. Submit a PR with Complete Information
-
-```markdown
-## Description
-Brief explanation of what this PR does.
-
-## Type of Change
-- [ ] Bug fix (non-breaking change fixing an issue)
-- [ ] New feature (non-breaking change adding functionality)
-- [ ] Breaking change (fix or feature causing existing functionality to change)
-- [ ] Documentation update
-
-## Related Issues
-Closes #123
-
-## Testing Done
-- [x] Ran local pytest: `pytest tests/ -v`
-- [x] Tested on GPU
-- [x] Verified backward compatibility
-
-## Checklist
-- [x] Code follows PEP 8 style guidelines
-- [x] Added tests for new functionality
-- [x] Updated documentation
-- [x] No new warnings generated
-- [x] Commits are clean and descriptive
-```
-
-#### 5. Respond to Review Feedback
-
-- Be receptive to suggestions
-- Update your branch with requested changes:
-
-```bash
-git add .
-git commit -m "Address review feedback"
-git push origin feature/your-feature-name
-```
-
-- Push doesn't require new PR — automatically updates the existing one
-
-### Areas Where We Need Help
-
-#### 🔬 Research & Models
-- [ ] Implement Vision Mamba architecture for comparison
-- [ ] Add Bayesian uncertainty quantification
-- [ ] Graph Neural Networks for multi-scale lensing
-- [ ] Novel loss functions for parameter estimation
-
-#### 📊 Data & Simulation
-- [ ] Real HST/JWST cutout integration
-- [ ] Multi-wavelength simulation (radio, NIR)
-- [ ] Realistic PSF variation models
-- [ ] Augmentation strategies for limited data
-
-#### 🛠️ Engineering
-- [ ] Docker containerization
-- [ ] Cloud deployment (AWS/GCP) examples
-- [ ] Model serving (FastAPI, TensorFlow Serving)
-- [ ] Distributed training (multi-GPU, multi-node)
-
-#### 📚 Documentation
-- [ ] Tutorial Jupyter notebooks
-- [ ] Video walkthroughs
-- [ ] API documentation
-- [ ] Architecture deep-dives
-
-#### 🐛 Quality Assurance
-- [ ] Continuous integration workflows
-- [ ] GPU testing in CI/CD
-- [ ] Performance regression testing
-- [ ] Dependency security scanning
-
-### Reporting Issues
-
-Found a bug? Have an idea? Open an issue with:
-
-#### Bug Reports
-```markdown
-## Description
-Clear and concise description of the bug.
-
-## Reproduction Steps
-1. Run `python scripts/03_train_classifier.py --config configs/classifier.yaml`
-2. Set batch size to 128
-3. Observe...
-
-## Expected Behavior
-Model should train without errors.
-
-## Actual Behavior
-Received CUDA out of memory error.
-
-## Environment
-- OS: Ubuntu 22.04
-- GPU: NVIDIA RTX 4090
-- PyTorch: 2.2.0
-- Python: 3.11
-```
-
-#### Feature Requests
-```markdown
-## Problem Statement
-Current approach has limitation X, making it difficult to do Y.
-
-## Proposed Solution
-Use technique Z from paper [citation].
-
-## Alternative Approaches
-Option 1: ...
-Option 2: ...
-
-## Additional Context
-Relevant references, discussions, etc.
-```
-
-### Development Tips
-
-#### Running Tests During Development
-
-```bash
-# Watch mode: rerun tests on file changes (requires pytest-watch)
-pip install pytest-watch
-ptw tests/
-
-# Run only tests matching pattern
-pytest tests/ -k "classifier" -v
-
-# Stop on first failure (useful for TDD)
-pytest tests/ -x
-```
-
-#### Debugging
-
-```bash
-# Add breakpoint in your code
-import pdb; pdb.set_trace()
-
-# Or use built-in breakpoint() in Python 3.7+
-breakpoint()
-
-# Run pytest with pdb on failure
-pytest tests/ --pdb
-```
-
-#### Performance Profiling
-
-```bash
-# Profile test execution time
-pytest tests/ --durations=10
-
-# Memory profiling (requires memory_profiler)
-pip install memory-profiler
-python -m memory_profiler scripts/03_train_classifier.py
-```
-
-### Documentation Guidelines
-
-When adding features, update relevant docs:
-
-1. **Docstrings**: Google-style docstrings for all public functions
-2. **README**: Update if adding major features
-3. **Inline comments**: Explain *why*, not *what* (code should be self-explanatory)
-4. **Type hints**: Always include for function arguments and returns
-
-Example:
-
-```python
-def forward(
-    self,
-    x: torch.Tensor,
-    return_features: bool = False
-) -> torch.Tensor | tuple[torch.Tensor, torch.Tensor]:
-    """
-    Forward pass through lens classifier.
-    
-    Args:
-        x: Input images, shape (B, 1, 64, 64), normalized to [-1, 1]
-        return_features: If True, also return feature vectors before logit
-        
-    Returns:
-        If return_features=False: Logits shape (B, 1)
-        If return_features=True: Tuple of (logits, features) where
-            features shape (B, 512)
-            
-    Raises:
-        ValueError: If input shape is not (B, 1, 64, 64)
-        
-    Example:
-        >>> model = LensClassifier()
-        >>> images = torch.randn(4, 1, 64, 64)
-        >>> logits = model(images)
-        >>> logits.shape
-        torch.Size([4, 1])
-    """
-    ...
-```
-
-### Code Review Process
-
-Your PR will be reviewed by maintainers for:
-
-✅ **Correctness**: Does it solve the stated problem?  
-✅ **Testing**: Are all new code paths covered?  
-✅ **Performance**: Any regressions or opportunities?  
-✅ **Documentation**: Clear enough for others to understand?  
-✅ **Style**: Consistent with existing codebase?  
-✅ **Scope**: Focused or trying to do too much?  
+- [Architecture notes](ARCHITECTURE.md)
+- [Contributing guide](CONTRIBUTING.md)
 
 ---
 
