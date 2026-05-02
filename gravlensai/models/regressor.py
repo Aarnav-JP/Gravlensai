@@ -2,7 +2,7 @@
 CNN regression network estimating lens parameters from an image.
 
 Follows the architecture of Hezaveh et al. 2017 (Nature):
-- 5-block CNN feature extractor with BatchNorm
+- ResNet-50 feature extractor with BatchNorm
 - Outputs continuous values normalised to [-1, 1] via Tanh
 - At inference, denormalise to recover physical units
 
@@ -25,7 +25,7 @@ import torchvision.models as models
 
 class LensParameterRegressor(nn.Module):
     """
-    ResNet-18 regression network estimating lens parameters from an image.
+    ResNet-50 regression network estimating lens parameters from an image.
 
     Input:  (B, 1, 64, 64)
     Output: (B, N) — normalised [-1, 1] parameters, where N defaults to 6.
@@ -43,8 +43,8 @@ class LensParameterRegressor(nn.Module):
             )
         self.output_dim = output_dim
 
-        # Load ResNet-18 (no pre-trained weights since astronomical data is very different from ImageNet)
-        base_model = models.resnet18(weights=None)
+        # Load ResNet-50 (no pre-trained weights since astronomical data is very different from ImageNet)
+        base_model = models.resnet50(weights=None)
 
         # Modify the first convolutional layer to accept 1-channel (grayscale) inputs instead of 3
         base_model.conv1 = nn.Conv2d(1, 64, kernel_size=7, stride=2, padding=3, bias=False)
@@ -65,7 +65,7 @@ class LensParameterRegressor(nn.Module):
         )
 
         # Regression head with Dropout for Monte Carlo (MC) uncertainty estimation
-        # ResNet-18's fc layer has 512 input features.
+        # ResNet-50's fc layer has 2048 input features.
         self.regressor = nn.Sequential(
             nn.Dropout(p=dropout),
             nn.Linear(base_model.fc.in_features, 256),
