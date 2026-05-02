@@ -9,7 +9,8 @@ results/models/*.json
 results/models/tensorboard_classifier/
 results/models/tensorboard_regressor/
 results/predictions/
-results/figures/
+results/figures/*
+!results/figures/*.png
 results/hpo/
 results/reports/
 results/research/
