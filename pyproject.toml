@@ -58,6 +58,12 @@ version = {attr = "gravlensai.__version__"}
 [tool.mypy]
 python_version = "3.10"
 ignore_missing_imports = true
+follow_imports = "silent"
 warn_redundant_casts = true
 warn_unused_ignores = true
 show_error_codes = true
+exclude = ["venv", ".venv", "build", "dist"]
+
+[[tool.mypy.overrides]]
+module = "tifffile.*"
+ignore_errors = true
