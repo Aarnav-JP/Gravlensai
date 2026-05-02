@@ -77,6 +77,11 @@ class LensParameterRegressor(nn.Module):
             nn.Tanh(),  # Output in [-1, 1] matching normalised targets
         )
 
+        # Project high-dimensional ResNet-50 features down to 512-d for
+        # compatibility with downstream analysis and tests that expect 512-d
+        # embeddings (originally from ResNet-18).
+        self.feature_projection = nn.Linear(base_model.fc.in_features, 512)
+
     def forward(self, x: torch.Tensor) -> torch.Tensor:
         """
         Forward pass.
@@ -163,5 +168,7 @@ class LensParameterRegressor(nn.Module):
         Returns:
             (B, 512) feature tensor.
         """
-        features = self.features(x)
-        return features.view(features.size(0), -1)
+        features = self.features(x)  # (B, 2048)
+        flat = features.view(features.size(0), -1)
+        # Project to 512-d to preserve previous API/shape expectations
+        return self.feature_projection(flat)
